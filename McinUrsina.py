@@ -20,6 +20,7 @@ creeper_texture = load_texture("assets/creeper.png")
 sky_texture = load_texture("assets/skybox.png")
 arm_texture = load_texture("assets/arm_texture.png")
 punch_sound = Audio("assets/punch_sound", loop=False, autoplay=False)
+seednos = []
 block_pick = 1
 toggleP = False
 toggleE = False
@@ -195,33 +196,39 @@ class Block(Entity):
         print(texture)
         block = Block(texture)
 
-
-
-
-terrain_width = 8
-terrain_height = 5
+seed = ""
+digitnos = random.randint(1,64)
+for count in range(digitnos):
+ seednos.append(str(random.randint(0,9)))
+for count in range(0,digitnos):
+ seed = seed + seednos[count]
+ 
+seed = int(seed)
+terrain_width = 20
+terrain_height = 3
 h = 0
-noise = PerlinNoise(octaves = 3,seed = 9916498394)
+prev_y = 1
+noise = PerlinNoise(octaves = 3,seed = seed)
 amp = 10
-freq = 30
+freq = 40
 for i in range(terrain_width*terrain_width):
     voxel = Voxel(position = Vec3(floor(i/terrain_width),0,floor(i%terrain_width)),texture = grass_texture)
     y = floor(noise([voxel.x/freq, voxel.z/freq])*amp)+amp
     voxel.y = y
 for h in range(terrain_height):
     for i in range(terrain_width*terrain_width):
-        voxel = Voxel(position = Vec3(floor(i/terrain_width),y,floor(i%terrain_width)),texture = grass_texture)
-        y = (floor(noise([voxel.x/freq, voxel.z/freq])*amp)+amp)-1
-        if voxel.y < -1:
-            destroy(voxel)
+        voxel = Voxel(position = Vec3(floor(i/terrain_width),y,floor(i%terrain_width)),texture = dirt_texture)
+        y = (floor(noise([voxel.x/freq, voxel.z/freq])*amp)+amp)-(h+1)
+        voxel.y = y
 
 window.fullscreen = True
 
-
 def restart():
+    voxel = Voxel(position=Vec3(10, 34, 10),texture = None)
     player = FirstPersonController(
-        position=Vec3(0, 7, 0), height=2, jumpHeight=1, gravity=1
+        position=Vec3(10, 32, 10), height=2, jumpHeight=1, gravity=1
     )
+    
 
 
 restart()
